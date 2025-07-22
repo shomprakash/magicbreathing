@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Magic Breathing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #000000;
+      --dark-grey: #424242;
+      --light-grey: #242424;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--black);
+      color: var(--dark-grey);
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 42pt;
+      color: var(--light-grey);
+      margin-bottom: 10px;
+    }
+    p.tagline {
+      font-size: 12.3pt;
+      color: var(--dark-grey);
+      margin-bottom: 40px;
+    }
+    #instruction {
+      font-size: 36pt;
+      color: var(--light-grey);
+      margin: 20px 0 10px;
+    }
+    #timer {
+      font-size: 64pt;
+      font-weight: bold;
+      color: var(--dark-grey);
+    }
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14pt;
+      padding: 12px 24px;
+      border-radius: 30px;
+      border: none;
+      background-color: var(--light-grey);
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #3a3a3a;
+    }
+    .follow {
+      margin-top: 60px;
+    }
+    .follow a {
+      font-size: 12.3pt;
+      color: var(--dark-grey);
+      text-decoration: none;
+    }
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 28pt;
+      }
+      #instruction {
+        font-size: 28pt;
+      }
+      #timer {
+        font-size: 48pt;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Magic Breathing</h1>
+  <p class="tagline">You are not breathing air, you are modulating probability fields.</p>
+  <div id="instruction">Ready?</div>
+  <div id="timer">4</div>
+  <div class="controls">
+    <button id="startButton">Start</button>
+    <button id="stopButton">Stop</button>
+  </div>
+  <div class="follow">
+    <a href="https://instagram.com/magicbreathing" target="_blank">Follow @magicbreathing</a>
+  </div>
+
+  <script>
+    const steps = ["Inhale", "Hold", "Exhale", "Hold"];
+    const duration = 4;
+    let stepIndex = 0;
+    let countdown = duration;
+    let interval;
+    let running = false;
+
+    const instructionEl = document.getElementById("instruction");
+    const timerEl = document.getElementById("timer");
+    const startButton = document.getElementById("startButton");
+    const stopButton = document.getElementById("stopButton");
+
+    function updateDisplay() {
+      instructionEl.textContent = steps[stepIndex];
+      timerEl.textContent = countdown;
+    }
+
+    function nextStep() {
+      stepIndex = (stepIndex + 1) % steps.length;
+      countdown = duration;
+      updateDisplay();
+    }
+
+    function tick() {
+      countdown--;
+      if (countdown < 0) {
+        nextStep();
+      } else {
+        timerEl.textContent = countdown;
+      }
+    }
+
+    function startBreathing() {
+      if (running) return;
+      running = true;
+      stepIndex = 0;
+      countdown = duration;
+      updateDisplay();
+      interval = setInterval(tick, 1000);
+    }
+
+    function stopBreathing() {
+      running = false;
+      clearInterval(interval);
+      instructionEl.textContent = "Paused";
+      timerEl.textContent = "4";
+    }
+
+    startButton.addEventListener("click", startBreathing);
+    stopButton.addEventListener("click", stopBreathing);
+  </script>
+</body>
+</html>
