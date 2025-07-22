@@ -2,158 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Magic Breathing</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Magic Breathing — Box Breathing Meditation</title>
   <style>
-    :root {
-      --black: #000000;
-      --dark-grey: #424242;
-      --light-grey: #242424;
-    }
-    * {
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap');
+
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: var(--black);
-      color: var(--dark-grey);
+      background-color: #000;
+      color: #424242;
       font-family: 'Space Grotesk', sans-serif;
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      text-align: center;
-      padding: 20px;
+      letter-spacing: -0.042em;
     }
+
     h1 {
-      font-size: 42pt;
-      color: var(--light-grey);
-      margin-bottom: 10px;
+      font-size: 2.5rem;
+      margin-bottom: 0.5em;
     }
-    p.tagline {
-      font-size: 12.3pt;
-      color: var(--dark-grey);
-      margin-bottom: 40px;
+
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 2em;
     }
-    #instruction {
-      font-size: 36pt;
-      color: var(--light-grey);
-      margin: 20px 0 10px;
+
+    #controls {
+      margin-bottom: 1em;
     }
+
+    #pattern {
+      font-size: 1rem;
+      padding: 0.5em;
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #111;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 5px;
+    }
+
+    #loreBtn {
+      margin-left: 10px;
+      background-color: #111;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 5px;
+      padding: 0.5em 1em;
+      cursor: pointer;
+    }
+
+    #lore {
+      margin-bottom: 1.5em;
+      max-width: 600px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      display: none;
+    }
+
     #timer {
-      font-size: 64pt;
-      font-weight: bold;
-      color: var(--dark-grey);
+      font-size: 4rem;
+      margin-bottom: 1em;
     }
-    .controls {
-      margin-top: 30px;
+
+    #action {
+      font-size: 1.5rem;
+      margin-bottom: 1.5em;
+    }
+
+    #buttons {
       display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+      gap: 1em;
     }
+
     button {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 14pt;
-      padding: 12px 24px;
-      border-radius: 30px;
+      font-size: 1rem;
+      padding: 0.75em 1.5em;
       border: none;
-      background-color: var(--light-grey);
-      color: white;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background-color: #3a3a3a;
+      background-color: #555;
     }
-    .follow {
-      margin-top: 60px;
-    }
-    .follow a {
-      font-size: 12.3pt;
-      color: var(--dark-grey);
+
+    a.share {
+      margin-top: 2em;
+      display: inline-block;
+      font-size: 0.85rem;
+      color: #888;
       text-decoration: none;
-    }
-    @media screen and (max-width: 600px) {
-      h1 {
-        font-size: 28pt;
-      }
-      #instruction {
-        font-size: 28pt;
-      }
-      #timer {
-        font-size: 48pt;
-      }
     }
   </style>
 </head>
 <body>
+
   <h1>Magic Breathing</h1>
-  <p class="tagline">You are not breathing air, you are modulating probability fields.</p>
-  <div id="instruction">Ready?</div>
-  <div id="timer">4</div>
-  <div class="controls">
-    <button id="startButton">Start</button>
-    <button id="stopButton">Stop</button>
+  <p>you are not breathing air, you are modulating probability fields.</p>
+
+  <div id="controls">
+    <select id="pattern">
+      <option value="box">Box Breathing</option>
+      <option value="wimhof">Wim Hof</option>
+      <option value="holotropic">Holotropic</option>
+      <option value="dmt">DMT Breathing</option>
+    </select>
+    <button id="loreBtn">[lore]</button>
   </div>
-  <div class="follow">
-    <a href="https://instagram.com/magicbreathing" target="_blank">Follow @magicbreathing</a>
+
+  <div id="lore"></div>
+
+  <div id="action">ready to begin</div>
+  <div id="timer">00</div>
+
+  <div id="buttons">
+    <button id="startBtn">start</button>
+    <button id="stopBtn">stop</button>
   </div>
+
+  <a href="https://twitter.com/intent/tweet?text=just%20broke%20the%20simulation%20with%20%23magicbreathing%20%23breathe%20%E2%80%94%20try%20it%20here:%20magicbreathing.com" class="share" target="_blank">share this</a>
 
   <script>
-    const steps = ["Inhale", "Hold", "Exhale", "Hold"];
-    const duration = 4;
-    let stepIndex = 0;
-    let countdown = duration;
+    const loreData = {
+      box: "Box breathing is used by Navy SEALs and monks alike. Inhale 4, hold 4, exhale 4, hold 4 — balance restored. It’s a root access breath pattern for control and clarity. #magicbreathing #breathe",
+      wimhof: "Wim Hof breathing is rapid and powerful. Inhale deeply 30 times, hold, then exhale fully. It builds energy, immunity, and resistance to cold. Origin: Wim Hof (The Iceman). #magicbreathing #breathe",
+      holotropic: "Holotropic breathwork uses deep, fast breathing to access altered states. Developed by Stanislav Grof for emotional healing and trauma release. It’s psychedelic without substances. #magicbreathing #breathe",
+      dmt: "DMT breathing mimics the pineal activation state. Fast rhythmic breathing for 7-10 mins followed by stillness. Used in shamanic traditions to access inner visions. #magicbreathing #breathe"
+    };
+
+    const patternTimings = {
+      box: [4, 4, 4, 4],
+      wimhof: [2, 0, 2, 0],
+      holotropic: [3, 0, 3, 0],
+      dmt: [1, 0, 1, 0]
+    };
+
+    const patternNames = ['Inhale', 'Hold', 'Exhale', 'Hold'];
+
+    const lore = document.getElementById('lore');
+    const loreBtn = document.getElementById('loreBtn');
+    const patternSelect = document.getElementById('pattern');
+    const action = document.getElementById('action');
+    const timer = document.getElementById('timer');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
     let interval;
-    let running = false;
+    let step = 0;
+    let countdown = 0;
+    let currentPattern = 'box';
+    let timings = patternTimings[currentPattern];
 
-    const instructionEl = document.getElementById("instruction");
-    const timerEl = document.getElementById("timer");
-    const startButton = document.getElementById("startButton");
-    const stopButton = document.getElementById("stopButton");
-
-    function updateDisplay() {
-      instructionEl.textContent = steps[stepIndex];
-      timerEl.textContent = countdown;
+    function updateLore() {
+      const pattern = patternSelect.value;
+      lore.innerText = loreData[pattern];
     }
 
-    function nextStep() {
-      stepIndex = (stepIndex + 1) % steps.length;
-      countdown = duration;
-      updateDisplay();
-    }
-
-    function tick() {
-      countdown--;
-      if (countdown < 0) {
-        nextStep();
+    loreBtn.onclick = () => {
+      if (lore.style.display === 'none') {
+        updateLore();
+        lore.style.display = 'block';
       } else {
-        timerEl.textContent = countdown;
+        lore.style.display = 'none';
       }
-    }
+    };
 
-    function startBreathing() {
-      if (running) return;
-      running = true;
-      stepIndex = 0;
-      countdown = duration;
-      updateDisplay();
-      interval = setInterval(tick, 1000);
-    }
-
-    function stopBreathing() {
-      running = false;
+    patternSelect.onchange = () => {
+      currentPattern = patternSelect.value;
+      timings = patternTimings[currentPattern];
+      step = 0;
       clearInterval(interval);
-      instructionEl.textContent = "Paused";
-      timerEl.textContent = "4";
+      timer.textContent = '00';
+      action.textContent = 'ready to begin';
+      lore.style.display = 'none';
+    };
+
+    function runBreathingCycle() {
+      action.textContent = patternNames[step];
+      countdown = timings[step];
+      timer.textContent = countdown < 10 ? '0' + countdown : countdown;
+
+      interval = setInterval(() => {
+        countdown--;
+        timer.textContent = countdown < 10 ? '0' + countdown : countdown;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          step = (step + 1) % 4;
+          runBreathingCycle();
+        }
+      }, 1000);
     }
 
-    startButton.addEventListener("click", startBreathing);
-    stopButton.addEventListener("click", stopBreathing);
+    startBtn.onclick = () => {
+      clearInterval(interval);
+      step = 0;
+      runBreathingCycle();
+    };
+
+    stopBtn.onclick = () => {
+      clearInterval(interval);
+      action.textContent = 'ready to begin';
+      timer.textContent = '00';
+    };
   </script>
+
 </body>
 </html>
